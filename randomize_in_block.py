@@ -37,8 +37,8 @@ if __name__ == "__main__":
                 result = randomize_in_block(Image.open(file))
                 out_path = out_dir / f"{file.stem}.png"
                 assert out_path != file
-            except Exception:
-                print(f"{file.relative_to(p)} processing FAILURE")
+            except Exception as e:
+                print(f"{file.relative_to(p)} processing FAILURE ({e})")
                 continue
             print(f"{file.relative_to(p)} processing success")
             result.save(out_path)
