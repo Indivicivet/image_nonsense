@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 from PIL import Image
 import numpy as np
@@ -25,4 +26,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_path")
     args = parser.parse_args()
-    randomize_in_block(Image.open(args.input_path)).show()
+    result = randomize_in_block(Image.open(args.input_path))
+    p = Path(args.input_path)
+    result.save(p.parent / f"{p.stem}_shuffled.png")
