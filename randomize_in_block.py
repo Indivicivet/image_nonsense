@@ -31,11 +31,11 @@ if __name__ == "__main__":
     p = Path(args.input_path)
     if p.is_dir():
         out_dir = p / "shuffled"
-        out_dir.mkdir(exist_ok=True)
         for file in p.rglob("*.*"):
             try:
                 result = randomize_in_block(Image.open(file))
                 out_path = (out_dir / file.relative_to(p)).with_suffix(".png")
+                out_path.parent.mkdir(exist_ok=True, parents=True)
                 assert out_path != file
             except Exception as e:
                 print(f"{file.relative_to(p)} processing FAILURE ({e})")
