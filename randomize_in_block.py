@@ -29,6 +29,8 @@ if __name__ == "__main__":
     parser.add_argument("input_path")
     args = parser.parse_args()
     p = Path(args.input_path)
+    if p.is_dir():
+        input(f"about to process a directory {p}, press enter to continue:\n> ")
     for file in (
         p.rglob("*.*")
         if p.is_dir()
