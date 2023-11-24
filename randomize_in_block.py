@@ -34,6 +34,8 @@ if __name__ == "__main__":
         out_dir = p / "shuffled"
         files = list(p.rglob("*.*"))
         for file in tqdm(files):
+            if any(par.name == "shuffled" for par in file.parents):
+                continue
             try:
                 result = randomize_in_block(Image.open(file))
                 out_path = (out_dir / file.relative_to(p)).with_suffix(".png")
