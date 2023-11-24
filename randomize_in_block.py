@@ -30,16 +30,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     p = Path(args.input_path)
     if p.is_dir():
-        input(f"about to process a directory {p}, press enter to continue:\n> ")
-    for file in (
-        p.rglob("*.*")
-        if p.is_dir()
-        else [p]
-    ):
-        try:
-            result = randomize_in_block(Image.open(file))
-            print(f"{file.name} reading success")
-        except Exception:
-            print(f"{file.name} reading FAILURE")
-            continue
-        result.save(file.parent / f"{file.stem}_shuffled.png")
+        out_dir = p / "shuffled"
+        out_dir.mkdir(exist_ok=True)
+        for file in p.rglob("*.*"):
+            try:
+                result = randomize_in_block(Image.open(file))
+                print(f"{file.relative_to(p)} processing success")
+                out_path = out_dir / f"{file.stem}.png"
+                assert out_path != file
+            except Exception:
+                print(f"{file.relative_to(p)} processing FAILURE")
+                continue
+            result.save(out_path)
+    else:
+        result = randomize_in_block(Image.open(p))
+        result.save(p.parent / f"{p.stem}_shuffled.png")
