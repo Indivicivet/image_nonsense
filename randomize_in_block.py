@@ -35,12 +35,12 @@ if __name__ == "__main__":
         for file in p.rglob("*.*"):
             try:
                 result = randomize_in_block(Image.open(file))
-                print(f"{file.relative_to(p)} processing success")
                 out_path = out_dir / f"{file.stem}.png"
                 assert out_path != file
             except Exception:
                 print(f"{file.relative_to(p)} processing FAILURE")
                 continue
+            print(f"{file.relative_to(p)} processing success")
             result.save(out_path)
     else:
         result = randomize_in_block(Image.open(p))
