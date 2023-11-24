@@ -28,6 +28,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_path")
     args = parser.parse_args()
-    result = randomize_in_block(Image.open(args.input_path))
     p = Path(args.input_path)
-    result.save(p.parent / f"{p.stem}_shuffled.png")
+    for file in (
+        p.rglob("*.*")
+        if p.is_dir()
+        else [p]
+    ):
+        try:
+            result = randomize_in_block(Image.open(file))
+            print(f"{file.name} reading success")
+        except Exception:
+            print(f"{file.name} reading FAILURE")
+            continue
+        result.save(file.parent / f"{file.stem}_shuffled.png")
