@@ -10,7 +10,9 @@ def shuffle(arr):
     return np.random.default_rng().permuted(pixels, axis=0).reshape(arr.shape)
 
 
-def randomize_in_block(img, n_blocks=48):
+def randomize_in_block(img, n_blocks=48, max_res=720):
+    if img.width > max_res:
+        img = img.resize((max_res, int(img.height / img.width * max_res)))
     n_blocks_y = int(img.height / img.width * n_blocks)
     arr = np.array(img.convert("RGB"))
     return Image.fromarray(np.vstack([
