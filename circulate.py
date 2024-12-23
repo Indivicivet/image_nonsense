@@ -46,12 +46,12 @@ def circulate(
     )
     for j in range(height_pix):
         for i in range(width_pix):
-            for c_idx, r2 in enumerate(1 - downscaled_intensity[j, i]):
+            for c_idx, r in enumerate(1 - downscaled_intensity[j, i]):
                 result_01[
                     j * cell_size:(j + 1) * cell_size,
                     i * cell_size:(i + 1) * cell_size,
                     c_idx
-                ] -= rr2 <= r2
+                ] -= rr2 <= (r ** 2)
     return Image.fromarray((result_01 * 255).clip(0, 255).astype(np.uint8))
 
 
