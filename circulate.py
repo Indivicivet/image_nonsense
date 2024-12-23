@@ -17,7 +17,7 @@ def circulate(
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
     if cell_size is None:
-        cell_size = im.shape[1] // width_pix
+        cell_size = im.shape[1] // width_pix * 2
     intensity = (im / 255) ** image_gamma
     height_pix = (im.shape[0] * width_pix) // im.shape[1]
     downscaled_intensity = cv2.resize(
