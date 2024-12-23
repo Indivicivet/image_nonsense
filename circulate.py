@@ -6,7 +6,7 @@ from PIL import Image
 import cv2
 
 
-def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
+def circulate(im, width_pix=40, cell_size=None, just_pixellate=False):
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
     if cell_size is None:
@@ -18,8 +18,8 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
         (width_pix, height_pix),
         interpolation=cv2.INTER_AREA,
     )
-    if preview_pixellated:
-        Image.fromarray(
+    if just_pixellate:
+        return Image.fromarray(
             (
                 cv2.resize(
                     downscaled_intensity,
@@ -27,7 +27,7 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
                     interpolation=cv2.INTER_AREA,
                 ) ** (1 / 2.2) * 255
             ).clip(0, 255).astype(np.uint8)
-        ).show()
+        )
     xx, yy = np.meshgrid(
         np.linspace(-1, 1, cell_size),
         np.linspace(-1, 1, cell_size),
