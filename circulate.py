@@ -9,9 +9,9 @@ import cv2
 def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
-    intensity = im ** 2.2
     if cell_size is None:
         cell_size = im.shape[1] // width_pix
+    intensity = (im / 255) ** 2.2
     height_pix = (im.shape[0] * width_pix) // im.shape[1]
     downscaled_intensity = cv2.resize(
         intensity,
@@ -20,11 +20,13 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
     )
     if preview_pixellated:
         Image.fromarray(
-            cv2.resize(
-                downscaled_intensity,
-                im.shape[:2][::-1],
-                interpolation=cv2.INTER_AREA,
-            )
+            (
+                cv2.resize(
+                    downscaled_intensity,
+                    im.shape[:2][::-1],
+                    interpolation=cv2.INTER_AREA,
+                ) ** (1 / 2.2) * 255
+            ).clip(0, 255).astype(np.uint8)
         ).show()
     xx, yy = np.meshgrid(
         np.linspace(-1, 1, cell_size),
@@ -34,13 +36,13 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
     result_01 = np.full(
         shape=(height_pix * cell_size, width_pix * cell_size, 3),
         fill_value=1,
+        dtype=float,
     )
     for j in range(height_pix):
         for i in range(width_pix):
-            rgb_01 = downscaled_intensity[j, i] / 255
             for c_indices, r2 in zip(
                 [(1, 2), (0, 2), (0, 1)],
-                1 - rgb_01,
+                1 - downscaled_intensity[j, i],
             ):
                 circ = rr2 <= r2
                 for c_idx in c_indices:
@@ -48,7 +50,7 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
                         j * cell_size:(j + 1) * cell_size,
                         i * cell_size:(i + 1) * cell_size,
                         c_idx
-                    ] -= circ
+                    ] -= circ / 2
     return Image.fromarray((result_01 * 255).clip(0, 255).astype(np.uint8))
 
 
