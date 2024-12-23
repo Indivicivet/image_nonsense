@@ -12,6 +12,7 @@ def circulate(
     cell_size=None,
     just_pixelate=False,
     image_gamma=2,
+    lp_norm=2,
 ):
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
@@ -38,7 +39,7 @@ def circulate(
         np.linspace(-1, 1, cell_size),
         np.linspace(-1, 1, cell_size),
     )
-    rr2 = xx ** 2 + yy ** 2
+    rr_to_norm = xx ** lp_norm + yy ** lp_norm
     result_01 = np.full(
         shape=(height_pix * cell_size, width_pix * cell_size, 3),
         fill_value=1,
@@ -51,7 +52,7 @@ def circulate(
                     j * cell_size:(j + 1) * cell_size,
                     i * cell_size:(i + 1) * cell_size,
                     c_idx
-                ] -= rr2 <= (r ** 2)
+                ] -= rr_to_norm <= (r ** lp_norm * 1.1)
     return Image.fromarray((result_01 * 255).clip(0, 255).astype(np.uint8))
 
 
@@ -62,5 +63,5 @@ if __name__ == "__main__":
     p = Path(args.input_path)
     im_1 = Image.open(p)
     for pixelate, tag in [(False, "circulated"), (True, "pixelated")]:
-        result = circulate(im_1, just_pixelate=pixelate)
+        result = circulate(im_1, just_pixelate=pixelate, lp_norm=4)
         result.save(p.parent / f"{p.stem}_{tag}.png")
