@@ -6,7 +6,7 @@ from PIL import Image
 import cv2
 
 
-def circulate(im, width_pix=40, cell_size=None, just_pixellate=False):
+def circulate(im, width_pix=40, cell_size=None, just_pixelate=False):
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
     if cell_size is None:
@@ -18,7 +18,7 @@ def circulate(im, width_pix=40, cell_size=None, just_pixellate=False):
         (width_pix, height_pix),
         interpolation=cv2.INTER_AREA,
     )
-    if just_pixellate:
+    if just_pixelate:
         return Image.fromarray(
             (
                 cv2.resize(
