@@ -6,10 +6,12 @@ from PIL import Image
 import cv2
 
 
-def circulate(im, width_pix=40, cell_size=20, preview_pixellated=False):
+def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
     if isinstance(im, Image.Image):
         im = np.array(im.convert("RGB"))
     intensity = im ** 2.2
+    if cell_size is None:
+        cell_size = im.shape[1] // width_pix
     height_pix = (im.shape[0] * width_pix) // im.shape[1]
     downscaled_intensity = cv2.resize(
         intensity,
