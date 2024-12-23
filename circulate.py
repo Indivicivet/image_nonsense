@@ -54,5 +54,7 @@ if __name__ == "__main__":
     parser.add_argument("input_path")
     args = parser.parse_args()
     p = Path(args.input_path)
-    result = circulate(Image.open(p))
-    result.save(p.parent / f"{p.stem}_circulated.png")
+    im = Image.open(p)
+    for pixelate, tag in [(False, "circulated"), (True, "pixelated")]:
+        result = circulate(im, just_pixelate=pixelate)
+        result.save(p.parent / f"{p.stem}_{tag}.png")
