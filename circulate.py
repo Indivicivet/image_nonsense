@@ -23,7 +23,7 @@ def circulate(im, width_pix=40, cell_size=None, just_pixelate=False):
             (
                 cv2.resize(
                     downscaled_intensity,
-                    im.shape[:2][::-1],
+                    (width_pix * cell_size, height_pix * cell_size),
                     interpolation=cv2.INTER_AREA,
                 ) ** (1 / 2.2) * 255
             ).clip(0, 255).astype(np.uint8)
