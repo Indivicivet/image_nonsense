@@ -42,7 +42,7 @@ def circulate(im, width_pix=40, cell_size=None, preview_pixellated=True):
                 [(1, 2), (0, 2), (0, 1)],
                 1 - rgb_01,
             ):
-                circ = rr2 < r2
+                circ = rr2 <= r2
                 for c_idx in c_indices:
                     result_01[
                         j * cell_size:(j + 1) * cell_size,
