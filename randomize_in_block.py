@@ -42,7 +42,7 @@ if __name__ == "__main__":
         out_dir = p / "shuffled"
         files = list(p.rglob("*.*"))
         for file in tqdm(files):
-            if any("shuffled" in par.name for par in file.parents):
+            if "shuffled" in str(par.resolve()):
                 continue
             try:
                 result = randomize_in_block(Image.open(file))
