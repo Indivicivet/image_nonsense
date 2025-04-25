@@ -26,7 +26,7 @@ class Model:
         self,
         input_path: Path,
         prompt: str,
-        threshold: float = 0.7,
+        threshold: float = -2,
         col: tuple = (0, 0, 0),
     ):
         """
@@ -58,8 +58,8 @@ class Model:
             align_corners=False,
         )[0, 0, :]
         mask = mask.cpu().numpy()
-        threshold_scaled = np.min(mask) + np.ptp(mask) * threshold
-        arr = np.where((mask >= threshold_scaled)[..., None], col, np.array(image))
+        # threshold_scaled = np.min(mask) + np.ptp(mask) * threshold
+        arr = np.where((mask >= threshold)[..., None], col, np.array(image))
         result = Image.fromarray(arr.clip(0, 255).astype(np.uint8))
         output_path = (
             input_path.parent
