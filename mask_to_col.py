@@ -27,17 +27,12 @@ class Model:
         input_path: Path,
         prompt: str,
         threshold: float = -2,
+        threshold_fade: float = 1,  # fade to not masked
         col: tuple = (0, 0, 0),
     ):
         """
         Loads an image, uses CLIPSeg to segment the regions matching `prompt`,
         thresholds the mask, paints those pixels black, and saves the result.
-
-        Args:
-            input_path:  Path to the input PNG/JPG.
-            prompt:      Text prompt for segmentation.
-            threshold:   Mask threshold in [0,1] to binarize (default: 0.5).
-            col:         Color.
         """
         image = Image.open(input_path).convert("RGB")
         inputs = self.processor(
@@ -51,15 +46,15 @@ class Model:
 
         # Note: image.height, image.width are (H, W),
         # matching PyTorch's expected order
-        mask = torch.nn.functional.interpolate(
+        logits = torch.nn.functional.interpolate(
             outputs.logits.unsqueeze(0),
             size=(image.height, image.width),
             mode="bilinear",
             align_corners=False,
-        )[0, 0, :]
-        mask = mask.cpu().numpy()
-        # threshold_scaled = np.min(mask) + np.ptp(mask) * threshold
-        arr = np.where((mask >= threshold)[..., None], col, np.array(image))
+        )[0, 0, :].cpu().numpy()
+        # map [threshold - threshold_fade, threshold] to [0, 1]
+        mask = np.clip(1 + (logits - threshold) / threshold_fade, 0, 1)[..., np.newaxis]
+        arr = (1 - mask) * np.array(image) + mask * col
         result = Image.fromarray(arr.clip(0, 255).astype(np.uint8))
         output_path = (
             input_path.parent
