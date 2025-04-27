@@ -59,6 +59,7 @@ class Model:
         output_path = (
             input_path.parent
             / "clipseg"
+            / prompt
             / f"{input_path.stem}_modified.png"
         )
         output_path.parent.mkdir(exist_ok=True, parents=True)
