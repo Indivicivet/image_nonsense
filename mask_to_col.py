@@ -26,8 +26,9 @@ class Model:
         self,
         input_path: Path,
         prompt: str,
-        threshold: float = -2,
-        threshold_fade: float = 1,  # fade to not masked
+        threshold: float = -1.5,
+        threshold_fade: float = 1.5,  # fade to not masked
+        threshold_tweak_factor: float = 1,  # add ratio of max to normalize
         col: tuple = (0, 0, 0),
     ):
         """
@@ -53,6 +54,7 @@ class Model:
             align_corners=False,
         )[0, 0, :].cpu().numpy()
         # map [threshold - threshold_fade, threshold] to [0, 1]
+        threshold += logits.max() * threshold_tweak_factor
         mask = np.clip(1 + (logits - threshold) / threshold_fade, 0, 1)[..., np.newaxis]
         arr = (1 - mask) * np.array(image) + mask * col
         result = Image.fromarray(arr.clip(0, 255).astype(np.uint8))
