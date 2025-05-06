@@ -3,6 +3,7 @@ Uses CLIPSeg to segment regions.
 """
 
 from pathlib import Path
+import traceback
 
 import torch
 import numpy as np
@@ -80,7 +81,12 @@ if __name__ == "__main__":
                 try:
                     model.mask_to_col(input_path=p, prompt=pmt)
                 except Exception as e:
-                    print(f"got {e} but continuing")
+                    print(
+                        f"got {''.join(
+                            traceback.TracebackException.from_exception(e).format()
+                        )}"
+                        f" but continuing"
+                    )
         else:
             model.mask_to_col(input_path=in_path, prompt=pmt)
         in_path = Path(input("enter path: "))
