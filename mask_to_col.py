@@ -11,7 +11,7 @@ from PIL import Image
 from transformers import CLIPSegProcessor, CLIPSegForImageSegmentation
 
 
-class Model:
+class ModelClipSeg:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.processor = CLIPSegProcessor.from_pretrained(
@@ -70,7 +70,7 @@ class Model:
 
 
 if __name__ == "__main__":
-    model = Model()
+    model = ModelClipSeg()
     in_path = Path(input("enter path: ").strip("\""))
     while in_path:
         pmt = input("enter prompt: ")
