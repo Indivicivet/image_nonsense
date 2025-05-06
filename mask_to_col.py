@@ -2,7 +2,6 @@
 Uses CLIPSeg to segment regions.
 """
 
-
 from pathlib import Path
 
 import torch
@@ -14,9 +13,7 @@ from transformers import CLIPSegProcessor, CLIPSegForImageSegmentation
 class ModelClipSeg:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.processor = CLIPSegProcessor.from_pretrained(
-            "CIDAS/clipseg-rd64-refined"
-        )
+        self.processor = CLIPSegProcessor.from_pretrained("CIDAS/clipseg-rd64-refined")
         self.model = CLIPSegForImageSegmentation.from_pretrained(
             "CIDAS/clipseg-rd64-refined"
         )
@@ -47,12 +44,16 @@ class ModelClipSeg:
 
         # Note: image.height, image.width are (H, W),
         # matching PyTorch's expected order
-        logits = torch.nn.functional.interpolate(
-            outputs.logits.unsqueeze(0),
-            size=(image.height, image.width),
-            mode="bilinear",
-            align_corners=False,
-        )[0, 0, :].cpu().numpy()
+        logits = (
+            torch.nn.functional.interpolate(
+                outputs.logits.unsqueeze(0),
+                size=(image.height, image.width),
+                mode="bilinear",
+                align_corners=False,
+            )[0, 0, :]
+            .cpu()
+            .numpy()
+        )
         # map [threshold - threshold_fade, threshold] to [0, 1]
         threshold += logits.max() * threshold_tweak_factor
         mask = np.clip(1 + (logits - threshold) / threshold_fade, 0, 1)[..., np.newaxis]
@@ -71,7 +72,7 @@ class ModelClipSeg:
 
 if __name__ == "__main__":
     model = ModelClipSeg()
-    in_path = Path(input("enter path: ").strip("\""))
+    in_path = Path(input("enter path: ").strip('"'))
     while in_path:
         pmt = input("enter prompt: ")
         if in_path.is_dir():
