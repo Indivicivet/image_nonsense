@@ -1,3 +1,12 @@
+"""
+swap left and right sides of a video
+you need ffmpeg (e.g. choco install ffmpeg-full)
+and (if applicable for your video) an appropriate versio of openh264:
+https://github.com/cisco/openh264/releases?page=2
+which at time of writing is 1.8.0
+"""
+
+
 import argparse
 from pathlib import Path
 from typing import Union
