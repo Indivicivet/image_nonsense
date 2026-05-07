@@ -24,31 +24,31 @@ def split_image_4way(img: Image.Image) -> list[Image.Image]:
     # Calculate boundaries
     # Quad 0: Top-Left
     q0 = (
-        0,
-        0,
-        w // 2 - margin_center // 2,
-        h // 2 - margin_center // 2,
+        1,
+        1,
+        w // 2 - margin_center // 2 - 1,
+        h // 2 - margin_center // 2 - 1,
     )
     # Quad 1: Top-Right
     q1 = (
-        w // 2 + margin_center // 2,
-        0,
-        w,
-        h // 2 - margin_center // 2,
+        w // 2 + margin_center // 2 + 1,
+        1,
+        w - 1,
+        h // 2 - margin_center // 2 - 1,
     )
     # Quad 2: Bottom-Left
     q2 = (
-        0,
-        h // 2 + margin_center // 2,
-        w // 2 - margin_center // 2,
-        h,
+        1,
+        h // 2 + margin_center // 2 + 1,
+        w // 2 - margin_center // 2 - 1,
+        h - 1,
     )
     # Quad 3: Bottom-Right
     q3 = (
-        w // 2 + margin_center // 2,
-        h // 2 + margin_center // 2,
-        w,
-        h,
+        w // 2 + margin_center // 2 + 1,
+        h // 2 + margin_center // 2 + 1,
+        w - 1,
+        h - 1,
     )
 
     return [img.crop(box) for box in (q0, q1, q2, q3)]
